@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; font-src 'self'; style-src 'self'; script-src 'self'; connect-src blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glitch Rune Forge</title>
+<meta name="description" content="Type any sentence, see it in Glitch Runes, save it as a PNG, JPG or looping GIF. Runs in your browser; nothing is uploaded.">
+<meta name="color-scheme" content="dark">
+<!-- Glitch Rune Forge. Built by build_site.py from coin/tools/rune_forge_template.html. -->
+<link rel="icon" href="favicon.svg?v=1" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="app.css?v=1">
+</head>
+<body>
+
+<header class="top">
+  <h1 aria-label="Glitch Rune Forge"><span class="mark" id="mark" aria-hidden="true"><span class="mk-word">Glitch Rune <span class="g">Forge</span></span></span></h1>
+  <p class="how"><b>&gt;</b> Type. See it in runes. Save the picture.</p>
+</header>
+
+<main class="app" id="forge">
+
+  <section class="sec sec-type" aria-labelledby="h-type">
+    <h2 id="h-type"><span class="n">01</span> Type</h2>
+    <label class="sr-only" for="text">Text to set in Glitch Runes</label>
+    <textarea id="text" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="TYPE ANYTHING" aria-describedby="meta">BE THE GLITCH</textarea>
+    <div class="meta" id="meta">
+      <span id="count">13 characters</span>
+      <span id="px" class="px"></span>
+      <span class="skipped" id="skipped" hidden></span>
+    </div>
+    <fieldset class="secret" id="secret">
+      <legend>Secret</legend>
+      <div class="seg">
+        <label><input type="radio" name="secret" value="off" checked><span>Off</span></label>
+        <label><input type="radio" name="secret" value="pad"><span>One-time key</span></label>
+        <label><input type="radio" name="secret" value="word"><span>Keyword</span></label>
+      </div>
+      <div class="keybox" id="keybox" hidden>
+        <label class="kl" for="key-out" id="key-label">Your one-time key</label>
+        <input class="key" id="key-out" readonly spellcheck="false" autocomplete="off">
+        <input class="key" id="key-word" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="TYPE A KEYWORD" hidden>
+        <div class="key-row">
+          <button class="btn small" type="button" id="key-copy">Copy key</button>
+          <button class="btn small" type="button" id="key-new">New key</button>
+        </div>
+        <p class="note" id="secret-note"></p>
+      </div>
+      <details class="decoder" id="decoder">
+        <summary>Decode a message</summary>
+        <div class="dec-body">
+          <label for="dec-code">Code</label>
+          <input class="key" id="dec-code" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="TYPE IT, OR TAP THE RUNES">
+          <div class="runekeys" id="dec-keys" role="group" aria-label="Rune keyboard: tap the runes you see, in order"></div>
+          <label for="dec-key">Key</label>
+          <input class="key" id="dec-key" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="THE KEY YOU WERE SENT">
+          <p class="dec-out" id="dec-out" aria-hidden="true"></p>
+          <p class="sr-only" id="dec-say" role="status" aria-live="polite"></p>
+          <p class="note" id="dec-note">Works with runes.py too: same letters, same key.</p>
+        </div>
+      </details>
+    </fieldset>
+  </section>
+
+  <section class="sec sec-save" aria-labelledby="h-save">
+    <h2 id="h-save"><span class="n">02</span> Save</h2>
+    <div class="saves">
+      <button class="btn rain" type="button" id="rain" aria-pressed="false">Glitch rain<span class="state" id="rain-state">Off</span></button>
+      <button class="btn go wide" type="button" id="save-gif" hidden>Save GIF<span class="sz" id="gif-size">960×540 · 4 s loop</span></button>
+      <p class="rain-note" id="rain-note" hidden>Your runes break into code rain and pour back. PNG and JPG save them whole.</p>
+      <fieldset class="rain-size" id="rain-size" hidden>
+        <legend>Rain rune size</legend>
+        <div class="seg">
+          <label><input type="radio" name="rune" value="small"><span class="stack">Small<small data-rune="small"></small></span></label>
+          <label><input type="radio" name="rune" value="medium" checked><span class="stack">Medium<small data-rune="medium"></small></span></label>
+          <label><input type="radio" name="rune" value="large"><span class="stack">Large<small data-rune="large"></small></span></label>
+          <label><input type="radio" name="rune" value="huge"><span class="stack">Huge<small data-rune="huge"></small></span></label>
+        </div>
+      </fieldset>
+      <div class="hidden-line" id="hidden-wrap" hidden>
+        <label for="hidden-text">Hidden line <span class="opt">· optional</span></label>
+        <input id="hidden-text" maxlength="120" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="THE RAIN SPELLS THIS">
+        <p class="note">When your runes break, the falling runes spell this line instead. Only people who know the alphabet will catch it.</p>
+      </div>
+      <button class="btn go" type="button" id="save-png">Save PNG<span class="sz" data-size>1600×900</span></button>
+      <button class="btn go" type="button" id="save-jpg">Save JPG<span class="sz" data-size>1600×900</span></button>
+      <button class="btn wide" type="button" id="copy" hidden>Copy image</button>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="sec sec-style" aria-labelledby="h-style">
+    <h2 id="h-style"><span class="n">03</span> Style</h2>
+
+    <fieldset>
+      <legend>Ink</legend>
+      <div class="seg">
+        <label><input type="radio" name="ink" value="green" checked><span><i class="sw sw-green"></i>Green</span></label>
+        <label><input type="radio" name="ink" value="white"><span><i class="sw sw-white"></i>White</span></label>
+        <label><input type="radio" name="ink" value="blue"><span><i class="sw sw-blue"></i>Blue</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Background</legend>
+      <div class="seg">
+        <label><input type="radio" name="bg" value="black" checked><span><i class="sw sw-black"></i>Void black</span></label>
+        <label><input type="radio" name="bg" value="clear"><span><i class="sw sw-clear"></i>Transparent</span></label>
+        <label><input type="radio" name="bg" value="deep"><span><i class="sw sw-deep"></i>Green-deep</span></label>
+      </div>
+      <p class="note" id="clear-note" hidden>PNG keeps it clear. JPG and GIF save on black.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Glow</legend>
+      <div class="seg">
+        <label><input type="radio" name="glow" value="off" checked><span>Off</span></label>
+        <label><input type="radio" name="glow" value="on"><span>Phosphor</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Scanlines</legend>
+      <div class="seg">
+        <label><input type="radio" name="scan" value="off" checked><span>Off</span></label>
+        <label><input type="radio" name="scan" value="on"><span>On</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Caption</legend>
+      <div class="seg">
+        <label><input type="radio" name="cap" value="none" checked><span>None</span></label>
+        <label><input type="radio" name="cap" value="plain"><span>Your text</span></label>
+        <label><input type="radio" name="cap" value="decode"><span>Mid-decode</span></label>
+      </div>
+      <p class="note" id="cap-note" hidden></p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Size</legend>
+      <div class="seg">
+        <label><input type="radio" name="size" value="post" checked><span class="stack">Post<small>1600×900</small></span></label>
+        <label><input type="radio" name="size" value="square"><span class="stack">Square<small>1080×1080</small></span></label>
+        <label><input type="radio" name="size" value="story"><span class="stack">Story<small>1080×1920</small></span></label>
+        <label><input type="radio" name="size" value="banner"><span class="stack">Banner<small>1500×500</small></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Align</legend>
+      <div class="seg">
+        <label><input type="radio" name="align" value="center" checked><span>Center</span></label>
+        <label><input type="radio" name="align" value="left"><span>Left</span></label>
+      </div>
+    </fieldset>
+  </section>
+
+  <section class="view" aria-label="Preview">
+    <div class="stage">
+      <div class="stage-title"><span class="t">Preview</span><span id="dims">1600 × 900 px</span></div>
+      <div class="stage-box">
+        <canvas id="view" width="1600" height="900" role="img" aria-label="BE THE GLITCH, set in Glitch Runes"></canvas>
+        <p class="stage-note" id="empty-note" hidden>&gt; Type something to see it in runes</p>
+      </div>
+      <div class="stage-foot">What you see is the file you save</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span><span class="g">∀</span> characters render offline</span>
+  <span>Glitch Runes · Barlow Condensed · Share Tech Mono · SIL OFL 1.1</span>
+  <span class="g">Be the glitch</span>
+</footer>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-t">
+  <div class="sheet-in">
+    <p id="sheet-t">Long-press the image to save it</p>
+    <img id="sheet-img" alt="Your runes image">
+    <button class="btn" type="button" id="sheet-close">Close</button>
+  </div>
+</div>
+
+<script src="app.js?v=1"></script>
+</body>
+</html>
